@@ -21,8 +21,8 @@ async function main() {
     }
 
     let blockSubscriber = new BlockSubscriber(mc, client.main);
-    blockSubscriber.addListener("block", ({blockId: BlockID, blockInfo: BlockInfo}) => {
-        console.log("block: " + BlockID.workchain + ":" + BlockID.shard + ":" + BlockID.seqno)
+    blockSubscriber.addListener("block", ({blockId, blockInfo}) => {
+        log("block " + blockId.workchain + " " + blockId.shard + " " + blockId.seqno + " " + blockInfo.end_lt + " " + blockInfo.transaction);
     })
 }
 

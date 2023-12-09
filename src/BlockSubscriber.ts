@@ -32,14 +32,20 @@ export class BlockSubscriber extends EventEmitter {
     }
 
     private async mcTick() {
-        log('Starting from block: ' + this.#initial.last.seqno);
 
         const initialSeqno = this.#initial.last.seqno;
+        const blockHeader = await this.#client.getBlockHeader(this.#initial.last)
+        const blockInfo = this.unpackBlockInfo(Cell.fromBoc(blockHeader.headerProof)[0]);
+        this.#startLt = blockInfo.end_lt;
+        log('Starting from block: ' + this.#initial.last.seqno + " lt: " + this.#startLt);
+
         while (!this.#stopped) {
             try {
                 const lastSavedSeqno = (await this.#storage.getLatestMasterchainBlock()) || initialSeqno;
                 const lastSeqno = (await this.#client.getMasterchainInfoExt()).last.seqno;
-                for (let i = lastSavedSeqno; i <= lastSeqno; i++) {
+
+                for (let i = lastSavedSeqno + 1; i <= lastSeqno; i++) {
+                    log("mc " + i)
                     let fullMcBlock = await this.#client.getFullBlock(i)
 
                     await this.#storage.insertMasterchainBlock(i);

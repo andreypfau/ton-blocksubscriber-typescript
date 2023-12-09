@@ -43,6 +43,9 @@ export class InMemoryBlockStorage implements BlockStorage {
 
     async insertShardBlocks(shardBlocks: BlockID[]) {
         for (let shardBlock of shardBlocks) {
+            if (shardBlock.workchain == -1) {
+                continue
+            }
             let key = this.blockIdKey(shardBlock);
             if (this.shardchainBlocks[key] !== undefined) {
                 continue;
